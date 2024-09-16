@@ -1,9 +1,9 @@
 use clap::Command;
 
 pub fn get_matches() -> clap::ArgMatches {
-    Command::new("lean_http")
-        .version("v0.1.0")
-        .author("Joao Vitor de Oliveira Santos")
+    Command::new(env!("CARGO_PKG_NAME"))
+        .version(env!("CARGO_PKG_VERSION"))
+        .author(env!("CARGO_PKG_AUTHORS"))
         .about("A lightweight HTTP client for making quick HTTP requests")
         .subcommand(
             Command::new("get")
