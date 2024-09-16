@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - test-branch
+      - JVitoroliv3ira/1/realizar_setup_do_projeto
   workflow_dispatch:
 
 jobs:
