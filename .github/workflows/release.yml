@@ -1,11 +1,10 @@
-
 name: Release on Merge to Main
 
 on:
   push:
     branches:
       - main
-      - ${{ vars.TEST_BRANCH }}
+      - ${{ secrets.TEST_BRANCH }}
   workflow_dispatch:
 
 jobs:
@@ -51,9 +50,11 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ env.VERSION }}
+          name: "Release ${{ env.VERSION }}"
+          body: "Release versão ${{ env.VERSION }}."
           files: |
             target/release/lean_http
             target/x86_64-pc-windows-gnu/release/lean_http.exe
         env:
           GITHUB_TOKEN: ${{ secrets.LEAN_HTTP_ACCESS_TOKEN }}
-          VERSION: ${{ env.VERSION }}
