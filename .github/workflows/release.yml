@@ -4,7 +4,10 @@ on:
   push:
     branches:
       - main
-      - ${{ secrets.TEST_BRANCH }}
+  pull_request:
+    types: [closed]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -19,6 +22,9 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Install GCC for Windows target
+        run: sudo apt-get update && sudo apt-get install -y gcc-mingw-w64-x86-64
+
       - name: Extract version from Cargo.toml
         id: extract_version
         run: echo "VERSION=$(grep ^version Cargo.toml | sed -E 's/version = \"(.*)\"/v\1/')" >> $GITHUB_ENV
@@ -32,9 +38,10 @@ jobs:
           name: lean_http-linux
           path: target/release/lean_http
 
-      - name: Set up Windows build
-        uses: actions/setup-rust@v1
+      - name: Set up Rust for Windows
+        uses: actions-rs/toolchain@v1
         with:
+          toolchain: stable
           target: x86_64-pc-windows-gnu
 
       - name: Build for Windows
@@ -52,7 +59,17 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           name: "Release ${{ env.VERSION }}"
-          body: "Release versão ${{ env.VERSION }}."
+          body: |
+            ## Changelog
+            - Esta release inclui as alterações do [Merge Request #${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }}) para a branch `main`.
+            
+            ### Detalhes
+            - Autor: ${{ github.event.pull_request.user.login }}
+            - Título: ${{ github.event.pull_request.title }}
+            - Data: ${{ github.event.pull_request.merged_at }}
+
+            ### Artefatos
+            Inclui os binários compilados para Linux e Windows.
           files: |
             target/release/lean_http
             target/x86_64-pc-windows-gnu/release/lean_http.exe
