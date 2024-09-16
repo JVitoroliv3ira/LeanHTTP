@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - ${{ secrets.TEST_BRANCH }}
+      - JVitoroliv3ira/1/realizar_setup_do_projeto
   workflow_dispatch:
 
 jobs:
@@ -52,7 +52,7 @@ jobs:
         with:
           tag_name: ${{ env.VERSION }}
           name: "Release ${{ env.VERSION }}"
-          body: "Release versão ${{ env.VERSION }}."
+          body: "Descrição da release para a versão ${{ env.VERSION }}."
           files: |
             target/release/lean_http
             target/x86_64-pc-windows-gnu/release/lean_http.exe
