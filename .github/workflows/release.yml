@@ -32,9 +32,10 @@ jobs:
           name: lean_http-linux
           path: target/release/lean_http
 
-      - name: Set up Windows build
-        uses: actions/setup-rust@v1
+      - name: Set up Rust for Windows
+        uses: actions-rs/toolchain@v1
         with:
+          toolchain: stable
           target: x86_64-pc-windows-gnu
 
       - name: Build for Windows
