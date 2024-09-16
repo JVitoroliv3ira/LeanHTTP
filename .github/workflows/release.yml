@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: linux-binary
-          path: target/release/<nome_do_projeto>
+          path: target/release/lean_http
 
   build-windows:
     runs-on: windows-latest
@@ -62,7 +62,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: windows-binary
-          path: target/x86_64-pc-windows-gnu/release/<nome_do_projeto>.exe
+          path: target/x86_64-pc-windows-gnu/release/lean_http.exe
 
   create-github-release:
     runs-on: ubuntu-latest
