@@ -1,33 +1,27 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
 
-# Diretório de build do Cargo
-/target/
+# Test binaries
+*.test
+*.out
 
-# Arquivos de dependências do Cargo
-**/*.rs.bk
-Cargo.lock
+# Output of the go coverage tool
+*.coverprofile
+*.cov
 
-# Arquivos de metadados do Rust/Cargo
-/.idea/
-/.vscode/
-/*.rs.bk
-/.DS_Store
+# Temporary files
+*.tmp
+*.temp
 
-# Diretório de dependências locais
-/Cargo.toml.bk
+# Build directories
+/build/
+/bin/
+/dist/
 
-# Arquivos do editor de texto
-*.swp
-*.swo
-*~
+# Go module files
+/src/go.sum
 
-# Arquivos de log e dump
-*.log
-*.dmp
-*.gz
-
-# Arquivos de sistema do macOS
-.DS_Store
-Thumbs.db
-
-# Arquivos gerados por testes
-/tests/output/

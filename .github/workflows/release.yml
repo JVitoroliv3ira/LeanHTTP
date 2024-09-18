@@ -14,41 +14,40 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v3
 
-      - name: Set up Rust
-        uses: actions-rs/toolchain@v1
+      - name: Set up Go
+        uses: actions/setup-go@v3
         with:
-          toolchain: stable
+          go-version: '1.21'
 
-      - name: Install GCC for Windows target
-        run: sudo apt-get update && sudo apt-get install -y gcc-mingw-w64-x86-64
-
-      - name: Extract version from Cargo.toml
+      - name: Extract version from src/version/version.go
         id: extract_version
-        run: echo "VERSION=$(grep ^version Cargo.toml | sed -E 's/version = \"(.*)\"/v\1/')" >> $GITHUB_ENV
+        run: |
+          VERSION=$(grep 'var Version' src/version/version.go | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Build for Linux
-        run: cargo build --release
+        run: |
+          mkdir -p bin
+          GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
+          go build -ldflags="-X 'src/version.Version=${{ env.VERSION }}'" -o bin/lean_http
 
       - name: Upload Linux Binary
         uses: actions/upload-artifact@v3
         with:
           name: lean_http-linux
-          path: target/release/lean_http
-
-      - name: Set up Rust for Windows
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: x86_64-pc-windows-gnu
+          path: bin/lean_http
 
       - name: Build for Windows
-        run: cargo build --release --target x86_64-pc-windows-gnu
+        run: |
+          mkdir -p bin
+          GOOS=windows GOARCH=amd64 CGO_ENABLED=0 \
+          go build -ldflags="-X 'src/version.Version=${{ env.VERSION }}'" -o bin/lean_http.exe
 
       - name: Upload Windows Binary
         uses: actions/upload-artifact@v3
         with:
           name: lean_http-windows
-          path: target/x86_64-pc-windows-gnu/release/lean_http.exe
+          path: bin/lean_http.exe
 
       - name: Create GitHub Release
         id: create_release
@@ -58,7 +57,7 @@ jobs:
           name: "Release ${{ env.VERSION }}"
           body: |
             ## Changelog
-            - Esta release inclui as alterações do [Merge Request #${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }}) para a branch `main`.
+            - Esta release inclui as alterações do [Pull Request #${{ github.event.pull_request.number }}](${{ github.event.pull_request.html_url }}) para a branch `main`.
             
             ### Detalhes
             - Autor: ${{ github.event.pull_request.user.login }}
@@ -68,7 +67,7 @@ jobs:
             ### Artefatos
             Inclui os binários compilados para Linux e Windows.
           files: |
-            target/release/lean_http
-            target/x86_64-pc-windows-gnu/release/lean_http.exe
+            bin/lean_http
+            bin/lean_http.exe
         env:
           GITHUB_TOKEN: ${{ secrets.LEAN_HTTP_ACCESS_TOKEN }}
